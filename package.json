@@ -1,6 +1,6 @@
 {
   "name": "screenrecorder-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A cross-platform CLI screen recorder powered by ffmpeg",
   "main": "index.js",
   "bin": {
