@@ -197,6 +197,16 @@ PRs and Issues are welcome!
 
 ---
 
+## Buy Me a Coffee ☕
+
+If this tool saves you time, consider supporting development:
+
+| WeChat Pay | Alipay | PayPal |
+|------------|--------|--------|
+| ![WeChat](assets/WeChatPay.JPG) | ![Alipay](assets/AliPay.JPG) | ![PayPal](assets/PayPal.jpg) |
+
+---
+
 ## Changelog
 
 - **v1.0.0** — Initial release

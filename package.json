@@ -1,6 +1,6 @@
 {
   "name": "screenrecorder-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A cross-platform CLI screen recorder powered by ffmpeg",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "postinstall": "node scripts/check-env.js",
-    "test": "node test/test.js"
+    "test": "node test/screenrec.test.js"
   },
   "keywords": ["screen recorder", "ffmpeg", "cli", "screencast"],
   "author": "gdjdkid",
