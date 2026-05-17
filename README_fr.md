@@ -11,6 +11,10 @@
 
 ---
 
+![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+
+---
+
 ## Fonctionnalités
 
 - 🎥 **Enregistrement écran + audio** — Capture la vidéo du bureau, l'audio système et le microphone simultanément
@@ -195,21 +199,42 @@ La configuration est sauvegardée dans `~/.config/screenrec/config.json` et pers
 
 ---
 
+## Mise à jour
+
+**Option 1 : Installé via npm**
+```bash
+npm install -g screenrecorder-cli@latest
+```
+
+**Option 2 : Cloné depuis GitHub**
+```bash
+cd ScreenRecorder-cli
+git pull
+npm install -g .
+```
+
+**Vérifier la mise à jour :**
+```bash
+screenrec -v
+```
+
+---
+
 ## Questions fréquentes
 
-**Q : J'obtiens « ffmpeg not found » après l'installation ?**
+**Q : J'obtiens « ffmpeg not found » après l'installation ?**  
 R : ffmpeg doit être installé séparément. Voir la section Prérequis ci-dessus.
 
-**Q : Pas d'audio système sous Windows ?**
+**Q : Pas d'audio système sous Windows ?**  
 R : Installez [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) et utilisez `virtual-audio-capturer` comme périphérique audio système.
 
-**Q : Comment trouver mes noms de périphériques ?**
+**Q : Comment trouver mes noms de périphériques ?**  
 R : Exécutez `screenrec devices` pour lister tous les périphériques audio disponibles, puis sauvegardez-les avec `screenrec set-device`.
 
-**Q : Comment arrêter l'enregistrement ?**
+**Q : Comment arrêter l'enregistrement ?**  
 R : Appuyez sur `Ctrl+C`. Le fichier de sortie est sauvegardé automatiquement.
 
-**Q : Où se trouve le fichier de sortie ?**
+**Q : Où se trouve le fichier de sortie ?**  
 R : Exécutez `screenrec show-config` pour voir votre répertoire de sortie actuel.
 
 ---

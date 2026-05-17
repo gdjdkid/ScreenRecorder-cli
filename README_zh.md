@@ -11,6 +11,10 @@
 
 ---
 
+![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+
+---
+
 ## 功能特性
 
 - 🎥 **屏幕 + 音频录制** —— 同时捕获桌面画面、系统声音与麦克风，自动混音
@@ -195,21 +199,42 @@ set-device 选项：
 
 ---
 
+## 更新升级
+
+**方式一：通过 npm 安装的用户**
+```bash
+npm install -g screenrecorder-cli@latest
+```
+
+**方式二：从 GitHub 克隆的用户**
+```bash
+cd ScreenRecorder-cli
+git pull
+npm install -g .
+```
+
+**确认更新成功：**
+```bash
+screenrec -v
+```
+
+---
+
 ## 常见问题
 
-**Q：安装后提示 "ffmpeg not found"？**
+**Q：安装后提示 "ffmpeg not found"？**  
 A：ffmpeg 需单独安装，请参考上方「环境要求」部分。
 
-**Q：Windows 下无法录制系统声音？**
+**Q：Windows 下无法录制系统声音？**  
 A：请安装 [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free)，并将 `virtual-audio-capturer` 作为系统音频设备。
 
-**Q：如何找到设备名称？**
+**Q：如何找到设备名称？**  
 A：运行 `screenrec devices` 查看所有可用音频设备，然后用 `screenrec set-device` 保存。
 
-**Q：如何停止录制？**
+**Q：如何停止录制？**  
 A：按 `Ctrl+C`，输出文件自动保存。
 
-**Q：输出文件在哪里？**
+**Q：输出文件在哪里？**  
 A：运行 `screenrec show-config` 可查看当前输出目录。
 
 ---

@@ -11,6 +11,10 @@
 
 ---
 
+![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+
+---
+
 ## 機能
 
 - 🎥 **画面 + 音声録画** —— デスクトップ映像・システム音声・マイクを同時キャプチャしてミックス
@@ -195,21 +199,42 @@ set-device のオプション：
 
 ---
 
+## アップデート
+
+**方法 1：npm でインストールした場合**
+```bash
+npm install -g screenrecorder-cli@latest
+```
+
+**方法 2：GitHub からクローンした場合**
+```bash
+cd ScreenRecorder-cli
+git pull
+npm install -g .
+```
+
+**更新確認：**
+```bash
+screenrec -v
+```
+
+---
+
 ## よくある質問
 
-**Q：インストール後に "ffmpeg not found" と表示される？**
+**Q：インストール後に "ffmpeg not found" と表示される？**  
 A：ffmpeg を別途インストールしてください。上記「必要環境」セクションを参照してください。
 
-**Q：Windows でシステム音声が録音されない？**
+**Q：Windows でシステム音声が録音されない？**  
 A：[screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) をインストールし、システム音声デバイスとして `virtual-audio-capturer` を使用してください。
 
-**Q：デバイス名はどうやって調べるの？**
+**Q：デバイス名はどうやって調べるの？**  
 A：`screenrec devices` を実行すると利用可能な音声デバイスが一覧表示されます。その後 `screenrec set-device` で保存できます。
 
-**Q：録画を止めるには？**
+**Q：録画を止めるには？**  
 A：`Ctrl+C` を押してください。出力ファイルは自動的に保存されます。
 
-**Q：出力ファイルはどこにある？**
+**Q：出力ファイルはどこにある？**  
 A：`screenrec show-config` を実行すると現在の出力ディレクトリが確認できます。
 
 ---
