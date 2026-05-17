@@ -4,7 +4,7 @@
 
 > 一个基于 ffmpeg 的跨平台命令行录屏工具 —— 一条命令即可开始录制屏幕。
 
-[![npm version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
@@ -15,10 +15,10 @@
 
 - 🎥 **屏幕 + 音频录制** —— 同时捕获桌面画面、系统声音与麦克风，自动混音
 - 📁 **灵活的输出路径** —— 可永久保存默认输出目录，也可每次临时指定
+- 🎛️ **设备配置** —— 一次保存音频设备名称，永久生效
 - 🔍 **ffmpeg 自动检测** —— 安装时和运行时均会检测 ffmpeg 是否存在，缺失时自动给出安装指引
 - 🖥️ **跨平台支持** —— Windows (gdigrab)、macOS (avfoundation)、Linux (x11grab)
 - ⚡ **命令简洁** —— 一条命令启动、停止、配置
-- 🎛️ **可自定义** —— 帧率、音频开关、输出目录均可配置
 
 ---
 
@@ -36,7 +36,7 @@
 | macOS | `brew install ffmpeg` |
 | Linux | `sudo apt install ffmpeg` |
 
-> **Windows 系统音频说明：** 若需录制系统声音，请先安装 [VB-Audio Virtual Cable](https://vb-audio.com/Cable/)。
+> **Windows 系统音频说明：** 若需录制系统声音，请先安装 [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free)。
 
 ---
 
@@ -62,6 +62,23 @@ screenrec -v
 
 ---
 
+## 快速开始
+
+```bash
+# 1. 查看可用音频设备（Windows / macOS）
+screenrec devices
+
+# 2. 保存音频设备名称
+screenrec set-device --mic "麦克风 (你的设备名)" --system "virtual-audio-capturer"
+
+# 3. 开始录制
+screenrec start
+```
+
+按 `Ctrl+C` 停止录制，文件自动保存。
+
+---
+
 ## 使用方法
 
 **开始录制（使用已保存或默认输出目录）：**
@@ -79,6 +96,11 @@ screenrec start -o D:\我的录屏
 screenrec start --no-audio
 ```
 
+**本次临时使用指定麦克风：**
+```bash
+screenrec start --mic "USB Microphone"
+```
+
 **永久设置默认输出目录：**
 ```bash
 screenrec set-output D:\我的录屏
@@ -86,12 +108,21 @@ screenrec set-output D:\我的录屏
 screenrec set-output
 ```
 
+**保存音频设备名称到配置：**
+```bash
+# 交互模式
+screenrec set-device
+
+# 直接传参（推荐）
+screenrec set-device --mic "麦克风 (Conexant ISST Audio)" --system "virtual-audio-capturer"
+```
+
 **查看当前配置：**
 ```bash
 screenrec show-config
 ```
 
-**列出音频设备（仅 Windows）：**
+**列出音频设备：**
 ```bash
 screenrec devices
 ```
@@ -108,17 +139,22 @@ screenrec devices
 命令：
   start          开始录屏（默认命令）
   set-output     设置默认输出目录
+  set-device     配置并保存音频设备名称
   show-config    查看当前配置
   devices        列出可用音频输入设备
 
 start 选项：
-  -o, --output <路径>    输出目录（临时覆盖已保存的配置）
+  -o, --output <路径>    输出目录（仅本次有效，临时覆盖已保存配置）
   -r, --framerate <fps>  帧率（默认：30）
   --no-audio             禁用音频录制
-  --mic <名称>           麦克风设备名称（Windows）
-  --system <名称>        系统音频设备名称（Windows）
+  --mic <名称>           麦克风设备名称（仅本次有效）
+  --system <名称>        系统音频设备名称（仅本次有效）
   -v, --version          显示版本号
   -h, --help             显示帮助
+
+set-device 选项：
+  --mic <名称>           要保存的麦克风设备名称
+  --system <名称>        要保存的系统音频设备名称
 ```
 
 ---
@@ -139,7 +175,7 @@ start 选项：
 
 | 平台 | 视频捕获 | 系统音频 | 麦克风 |
 |---|---|---|---|
-| Windows | ✅ gdigrab | ✅ dshow（需 VB-Audio） | ✅ dshow |
+| Windows | ✅ gdigrab | ✅ dshow | ✅ dshow |
 | macOS | ✅ avfoundation | ✅ 内置 | ✅ 内置 |
 | Linux | ✅ x11grab | ✅ pulseaudio | ✅ pulseaudio |
 
@@ -151,7 +187,9 @@ start 选项：
 
 ```json
 {
-  "outputDir": "D:\\我的录屏"
+  "outputDir": "D:\\我的录屏",
+  "micDevice": "麦克风 (Conexant ISST Audio)",
+  "systemDevice": "virtual-audio-capturer"
 }
 ```
 
@@ -163,7 +201,10 @@ start 选项：
 A：ffmpeg 需单独安装，请参考上方「环境要求」部分。
 
 **Q：Windows 下无法录制系统声音？**
-A：请安装 [VB-Audio Virtual Cable](https://vb-audio.com/Cable/)，并将 `virtual-audio-capturer` 作为系统音频设备。
+A：请安装 [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free)，并将 `virtual-audio-capturer` 作为系统音频设备。
+
+**Q：如何找到设备名称？**
+A：运行 `screenrec devices` 查看所有可用音频设备，然后用 `screenrec set-device` 保存。
 
 **Q：如何停止录制？**
 A：按 `Ctrl+C`，输出文件自动保存。
@@ -197,6 +238,17 @@ A：运行 `screenrec show-config` 可查看当前输出目录。
 
 ---
 
+## Buy Me a Coffee ☕
+
+如果这个工具帮助了你，欢迎请我喝杯咖啡 ☕
+
+| 微信支付 | 支付宝 | PayPal |
+|----------|--------|--------|
+| ![WeChat](assets/WeChatPay.JPG) | ![Alipay](assets/AliPay.JPG) | ![PayPal](assets/PayPal.jpg) |
+
+---
+
 ## 更新日志
 
+- **v1.1.0** —— 新增 `set-device` 命令；修复 Ctrl+C 停止录制的崩溃问题；新增 macOS 设备列表支持；重构编码参数；移除硬编码设备名
 - **v1.0.0** —— 首次发布

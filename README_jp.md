@@ -4,7 +4,7 @@
 
 > ffmpeg を使ったクロスプラットフォーム CLI スクリーンレコーダー —— コマンド一つで画面録画を開始。
 
-[![npm version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
@@ -15,10 +15,10 @@
 
 - 🎥 **画面 + 音声録画** —— デスクトップ映像・システム音声・マイクを同時キャプチャしてミックス
 - 📁 **柔軟な出力パス** —— デフォルト出力ディレクトリを永続保存、または毎回一時指定も可能
+- 🎛️ **デバイス設定** —— 音声デバイス名を一度保存すれば次回から自動適用
 - 🔍 **ffmpeg 自動検出** —— インストール時・実行時に ffmpeg の有無を確認し、不足時は案内を表示
 - 🖥️ **クロスプラットフォーム** —— Windows (gdigrab)・macOS (avfoundation)・Linux (x11grab)
 - ⚡ **シンプルなコマンド** —— 開始・停止・設定をワンコマンドで
-- 🎛️ **カスタマイズ可能** —— フレームレート・音声オン/オフ・出力先を設定可能
 
 ---
 
@@ -36,7 +36,7 @@
 | macOS | `brew install ffmpeg` |
 | Linux | `sudo apt install ffmpeg` |
 
-> **Windows のシステム音声について：** システム音声を録音するには [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) を先にインストールしてください。
+> **Windows のシステム音声について：** システム音声を録音するには [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) を先にインストールしてください。
 
 ---
 
@@ -62,6 +62,23 @@ screenrec -v
 
 ---
 
+## クイックスタート
+
+```bash
+# 1. 利用可能な音声デバイスを確認（Windows / macOS）
+screenrec devices
+
+# 2. 音声デバイス名を保存
+screenrec set-device --mic "マイク (デバイス名)" --system "virtual-audio-capturer"
+
+# 3. 録画開始
+screenrec start
+```
+
+`Ctrl+C` で録画を停止します。ファイルは自動的に保存されます。
+
+---
+
 ## 使い方
 
 **録画開始（保存済みまたはデフォルトの出力先を使用）：**
@@ -79,6 +96,11 @@ screenrec start -o /Users/yourname/Movies
 screenrec start --no-audio
 ```
 
+**今回だけ指定のマイクを使用：**
+```bash
+screenrec start --mic "USB Microphone"
+```
+
 **デフォルト出力ディレクトリを永続設定：**
 ```bash
 screenrec set-output /Users/yourname/Movies
@@ -86,12 +108,21 @@ screenrec set-output /Users/yourname/Movies
 screenrec set-output
 ```
 
+**音声デバイス名を設定ファイルに保存：**
+```bash
+# 対話モード
+screenrec set-device
+
+# 直接指定（推奨）
+screenrec set-device --mic "マイク (Conexant ISST Audio)" --system "virtual-audio-capturer"
+```
+
 **現在の設定を表示：**
 ```bash
 screenrec show-config
 ```
 
-**音声デバイス一覧（Windows のみ）：**
+**音声デバイス一覧：**
 ```bash
 screenrec devices
 ```
@@ -108,17 +139,22 @@ screenrec devices
 コマンド：
   start          録画開始（デフォルト）
   set-output     デフォルト出力ディレクトリを設定
+  set-device     音声デバイス名を設定・保存
   show-config    現在の設定を表示
   devices        利用可能な音声入力デバイスを一覧表示
 
 start のオプション：
-  -o, --output <パス>    出力ディレクトリ（保存済み設定を一時的に上書き）
+  -o, --output <パス>    出力ディレクトリ（今回のみ有効、保存済み設定を一時的に上書き）
   -r, --framerate <fps>  フレームレート（デフォルト：30）
   --no-audio             音声録音を無効化
-  --mic <名前>           マイクデバイス名（Windows）
-  --system <名前>        システム音声デバイス名（Windows）
+  --mic <名前>           マイクデバイス名（今回のみ有効）
+  --system <名前>        システム音声デバイス名（今回のみ有効）
   -v, --version          バージョンを表示
   -h, --help             ヘルプを表示
+
+set-device のオプション：
+  --mic <名前>           保存するマイクデバイス名
+  --system <名前>        保存するシステム音声デバイス名
 ```
 
 ---
@@ -139,9 +175,42 @@ start のオプション：
 
 | プラットフォーム | 映像キャプチャ | システム音声 | マイク |
 |---|---|---|---|
-| Windows | ✅ gdigrab | ✅ dshow（VB-Audio 必要） | ✅ dshow |
+| Windows | ✅ gdigrab | ✅ dshow | ✅ dshow |
 | macOS | ✅ avfoundation | ✅ 内蔵 | ✅ 内蔵 |
 | Linux | ✅ x11grab | ✅ pulseaudio | ✅ pulseaudio |
+
+---
+
+## 設定ファイル
+
+設定は `~/.config/screenrec/config.json` に保存され、セッションをまたいで有効です。
+
+```json
+{
+  "outputDir": "/Users/yourname/Movies",
+  "micDevice": "マイク (Conexant ISST Audio)",
+  "systemDevice": "virtual-audio-capturer"
+}
+```
+
+---
+
+## よくある質問
+
+**Q：インストール後に "ffmpeg not found" と表示される？**
+A：ffmpeg を別途インストールしてください。上記「必要環境」セクションを参照してください。
+
+**Q：Windows でシステム音声が録音されない？**
+A：[screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) をインストールし、システム音声デバイスとして `virtual-audio-capturer` を使用してください。
+
+**Q：デバイス名はどうやって調べるの？**
+A：`screenrec devices` を実行すると利用可能な音声デバイスが一覧表示されます。その後 `screenrec set-device` で保存できます。
+
+**Q：録画を止めるには？**
+A：`Ctrl+C` を押してください。出力ファイルは自動的に保存されます。
+
+**Q：出力ファイルはどこにある？**
+A：`screenrec show-config` を実行すると現在の出力ディレクトリが確認できます。
 
 ---
 
@@ -163,6 +232,17 @@ PR・Issue 大歓迎です！
 
 ---
 
+## Buy Me a Coffee ☕
+
+このツールが役に立ったら、サポートしていただけると嬉しいです：
+
+| WeChat Pay | Alipay | PayPal |
+|------------|--------|--------|
+| ![WeChat](assets/WeChatPay.JPG) | ![Alipay](assets/AliPay.JPG) | ![PayPal](assets/PayPal.jpg) |
+
+---
+
 ## 更新履歴
 
+- **v1.1.0** —— `set-device` コマンドを追加；Ctrl+C 停止時のクラッシュを修正；macOS のデバイス一覧に対応；コーデック引数をリファクタリング；ハードコードされたデバイス名を削除
 - **v1.0.0** —— 初回リリース
