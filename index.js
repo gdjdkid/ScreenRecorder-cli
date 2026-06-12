@@ -31,8 +31,19 @@ program
     .option('--no-audio', 'Disable audio recording')
     .option('--mic <name>', 'Microphone device name (overrides saved config)')
     .option('--system <name>', 'System audio device name (overrides saved config)')
+    .option('-n, --name <name>', 'File name (without extension); skips the interactive prompt')
+    .option('-c, --countdown <seconds>', 'Countdown seconds before recording starts (default: 3, use 0 to disable)')
+    .option('--no-countdown', 'Skip the countdown entirely')
+    .option('-y, --yes', 'Skip all prompts (uses default name, countdown, and auto-renames on conflict)')
     .action((options) => {
-        startRecording(options);
+        // commander 的 --no-countdown 会把 options.countdown 设为 false
+        if (options.countdown === false) {
+            options.countdown = '0';
+        }
+        startRecording(options).catch((err) => {
+            console.error(`${RED}[screenrec] Error: ${err.message}${RESET}`);
+            process.exit(1);
+        });
     });
 
 // ── set-output 命令 ────────────────────────────────────
@@ -41,7 +52,6 @@ program
     .description('Set default output directory (saved to config file)')
     .action((dir) => {
         if (!dir) {
-            // 问题3：readline 已在顶部引入，这里直接用
             const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
             const defaultDir = getDefaultOutputDir();
             rl.question(
@@ -68,7 +78,7 @@ function saveOutputDir(dir) {
     console.log(`${YELLOW}  Run ${BOLD}screenrec start${RESET}${YELLOW} to begin recording.${RESET}`);
 }
 
-// ── set-device 命令─────────────────────
+// ── set-device 命令 ────────────────────────────────────
 program
     .command('set-device')
     .description('Configure and save audio device names to config')
@@ -76,7 +86,6 @@ program
     .option('--system <name>', 'System audio device name')
     .action((options) => {
         if (options.mic || options.system) {
-            // 直接通过参数保存，不进交互
             const toSave = {};
             if (options.mic)    toSave.micDevice    = options.mic;
             if (options.system) toSave.systemDevice = options.system;
@@ -86,7 +95,6 @@ program
             return;
         }
 
-        // 没有传参数 → 交互式引导
         const current = readConfig();
         const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
