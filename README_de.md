@@ -4,14 +4,14 @@
 
 > Ein plattformübergreifendes CLI-Bildschirmrekorder-Tool auf Basis von ffmpeg — Bildschirmaufnahme mit einem einzigen Befehl.
 
-[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 ---
 
-![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+![Demo](./assets/ScreenrecDemo.gif)
 
 ---
 
@@ -19,6 +19,9 @@
 
 - 🎥 **Bildschirm + Audio-Aufnahme** — Erfasst Desktop-Video, Systemton und Mikrofon gleichzeitig und mischt sie zusammen
 - 📁 **Flexibler Ausgabepfad** — Standardausgabeverzeichnis dauerhaft speichern oder pro Aufnahme angeben
+- 📝 **Interaktive Dateibenennung** — Vor der Aufnahme wird nach einem Dateinamen gefragt (oder mit `-n` überspringen)
+- 🔁 **Intelligente Duplikatbehandlung** — Erkennt vorhandene Dateien und bietet Umbenennen, Überschreiben oder automatische Nummerierung
+- ⏳ **Visueller Countdown** — Konfigurierbarer Countdown vor Aufnahmestart, damit du bereit bist
 - 🎛️ **Gerätekonfiguration** — Audiogerätename einmal speichern, dauerhaft verwenden
 - 🔍 **ffmpeg-Erkennung** — Prüft ffmpeg bei der Installation und Laufzeit; zeigt eine Installationsanleitung, wenn es fehlt
 - 🖥️ **Plattformübergreifend** — Windows (gdigrab), macOS (avfoundation), Linux (x11grab)
@@ -90,6 +93,30 @@ screenrec start
 screenrec start
 ```
 
+Beim Ausführen von `start` läuft screenrec folgende Schritte ab:
+1. Frage nach einem Dateinamen (Enter für den Standard-Zeitstempelnamen)
+2. Prüfung, ob eine Datei mit diesem Namen bereits existiert — falls ja, Auswahl zwischen Umbenennen, Überschreiben oder automatischer Nummerierung
+3. Anzeige eines 3-Sekunden-Countdowns vor Aufnahmestart
+
+**Dateinamen-Abfrage überspringen:**
+```bash
+screenrec start -n "demo_v1"
+```
+
+**Countdown anpassen oder überspringen:**
+```bash
+# 5-Sekunden-Countdown
+screenrec start -c 5
+
+# Kein Countdown
+screenrec start --no-countdown
+```
+
+**Alle Abfragen überspringen (Standardname, kein Countdown, automatische Nummerierung bei Konflikt):**
+```bash
+screenrec start -y
+```
+
 **Aufnahme in einen bestimmten Ordner:**
 ```bash
 screenrec start -o D:\MeineAufnahmen
@@ -153,6 +180,10 @@ Optionen für start:
   --no-audio             Audioaufnahme deaktivieren
   --mic <Name>           Mikrofongerätename (nur diese Sitzung)
   --system <Name>        Systemaudiogerätename (nur diese Sitzung)
+  -n, --name <Name>      Dateiname ohne Erweiterung; überspringt die interaktive Abfrage
+  -c, --countdown <s>    Countdown-Sekunden vor Aufnahmestart (Standard: 3, 0 zum Deaktivieren)
+  --no-countdown         Countdown vollständig überspringen
+  -y, --yes              Alle Abfragen überspringen (Standardname, kein Countdown, automatische Nummerierung)
   -v, --version          Versionsnummer ausgeben
   -h, --help             Hilfe anzeigen
 
@@ -222,19 +253,19 @@ screenrec -v
 
 ## Häufige Fragen
 
-**F: Nach der Installation erscheint „ffmpeg not found"?**  
+**F: Nach der Installation erscheint „ffmpeg not found"?**
 A: ffmpeg muss separat installiert werden. Siehe Abschnitt „Voraussetzungen" oben.
 
-**F: Kein Systemton unter Windows?**  
+**F: Kein Systemton unter Windows?**
 A: [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) installieren und `virtual-audio-capturer` als Systemaudiogerät verwenden.
 
-**F: Wie finde ich meine Gerätenamen?**  
+**F: Wie finde ich meine Gerätenamen?**
 A: `screenrec devices` ausführen, um alle verfügbaren Audiogeräte aufzulisten, und dann mit `screenrec set-device` speichern.
 
-**F: Wie stoppt man die Aufnahme?**  
+**F: Wie stoppt man die Aufnahme?**
 A: `Ctrl+C` drücken. Die Ausgabedatei wird automatisch gespeichert.
 
-**F: Wo befindet sich die Ausgabedatei?**  
+**F: Wo befindet sich die Ausgabedatei?**
 A: `screenrec show-config` ausführen, um das aktuelle Ausgabeverzeichnis zu sehen.
 
 ---
@@ -275,5 +306,6 @@ Wenn dieses Tool Ihnen Zeit spart, erwägen Sie, die Entwicklung zu unterstütze
 
 ## Änderungsprotokoll
 
+- **v1.2.0** — Interaktive Dateibenennung, intelligente Duplikatbehandlung und visuellen Countdown vor Aufnahmestart hinzugefügt
 - **v1.1.0** — `set-device`-Befehl hinzugefügt; SIGINT-Handler-Absturz behoben; macOS-Geräteliste ergänzt; Codec-Argumente refaktoriert; fest codierte Gerätenamen entfernt
 - **v1.0.0** — Erstveröffentlichung

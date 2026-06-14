@@ -4,14 +4,14 @@
 
 > Un grabador de pantalla CLI multiplataforma basado en ffmpeg — graba tu pantalla con un solo comando.
 
-[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 ---
 
-![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+![Demo](./assets/ScreenrecDemo.gif)
 
 ---
 
@@ -19,6 +19,9 @@
 
 - 🎥 **Grabación de pantalla + audio** — Captura video del escritorio, audio del sistema y micrófono simultáneamente
 - 📁 **Ruta de salida flexible** — Guarda un directorio de salida predeterminado o especifica uno por grabación
+- 📝 **Nombre de archivo interactivo** — Se solicita un nombre de archivo antes de grabar (o usa `-n` para omitir)
+- 🔁 **Gestión inteligente de duplicados** — Detecta archivos existentes y permite renombrar, sobrescribir o numerar automáticamente
+- ⏳ **Cuenta regresiva visual** — Cuenta regresiva configurable antes de comenzar la grabación
 - 🎛️ **Configuración de dispositivos** — Guarda los nombres de tus dispositivos de audio una vez, se aplican automáticamente
 - 🔍 **Detección automática de ffmpeg** — Verifica ffmpeg en la instalación y en tiempo de ejecución
 - 🖥️ **Multiplataforma** — Windows (gdigrab), macOS (avfoundation), Linux (x11grab)
@@ -90,6 +93,30 @@ Presiona `Ctrl+C` para detener — el archivo se guarda automáticamente.
 screenrec start
 ```
 
+Al ejecutar `start`, screenrec realiza los siguientes pasos:
+1. Solicita un nombre de archivo (presiona Enter para usar el nombre con marca de tiempo por defecto)
+2. Verifica si ya existe un archivo con ese nombre — si es así, permite renombrar, sobrescribir o numerar automáticamente
+3. Muestra una cuenta regresiva de 3 segundos antes de comenzar la grabación
+
+**Omitir la solicitud de nombre de archivo:**
+```bash
+screenrec start -n "demo_v1"
+```
+
+**Personalizar u omitir la cuenta regresiva:**
+```bash
+# Cuenta regresiva de 5 segundos
+screenrec start -c 5
+
+# Sin cuenta regresiva
+screenrec start --no-countdown
+```
+
+**Omitir todas las solicitudes (nombre por defecto, sin cuenta regresiva, numeración automática en conflicto):**
+```bash
+screenrec start -y
+```
+
 **Grabar en una carpeta específica:**
 ```bash
 screenrec start -o /home/usuario/Grabaciones
@@ -153,6 +180,10 @@ Opciones para start:
   --no-audio            Desactivar grabación de audio
   --mic <nombre>        Nombre del micrófono (solo esta sesión)
   --system <nombre>     Nombre del dispositivo de audio del sistema (solo esta sesión)
+  -n, --name <nombre>   Nombre de archivo sin extensión; omite la solicitud interactiva
+  -c, --countdown <s>   Segundos de cuenta regresiva antes de grabar (predeterminado: 3, 0 para desactivar)
+  --no-countdown        Omitir la cuenta regresiva por completo
+  -y, --yes             Omitir todas las solicitudes (nombre por defecto, sin cuenta regresiva, numeración auto)
   -v, --version         Mostrar número de versión
   -h, --help            Mostrar ayuda
 
@@ -222,19 +253,19 @@ screenrec -v
 
 ## Preguntas frecuentes
 
-**P: Aparece "ffmpeg not found" después de instalar?**  
+**P: Aparece "ffmpeg not found" después de instalar?**
 R: ffmpeg debe instalarse por separado. Ver la sección Requisitos arriba.
 
-**P: No hay audio del sistema en Windows?**  
+**P: No hay audio del sistema en Windows?**
 R: Instala [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) y usa `virtual-audio-capturer` como dispositivo de audio del sistema.
 
-**P: ¿Cómo encuentro los nombres de mis dispositivos?**  
+**P: ¿Cómo encuentro los nombres de mis dispositivos?**
 R: Ejecuta `screenrec devices` para listar todos los dispositivos de audio disponibles, luego guárdalos con `screenrec set-device`.
 
-**P: ¿Cómo detengo la grabación?**  
+**P: ¿Cómo detengo la grabación?**
 R: Presiona `Ctrl+C`. El archivo de salida se guarda automáticamente.
 
-**P: ¿Dónde está el archivo de salida?**  
+**P: ¿Dónde está el archivo de salida?**
 R: Ejecuta `screenrec show-config` para ver tu directorio de salida actual.
 
 ---
@@ -275,5 +306,6 @@ Si esta herramienta te ahorra tiempo, considera apoyar el desarrollo:
 
 ## Registro de cambios
 
+- **v1.2.0** — Añadido nombre de archivo interactivo, gestión inteligente de duplicados y cuenta regresiva visual antes de la grabación
 - **v1.1.0** — Añadido comando `set-device`; corregido crash al pulsar Ctrl+C; añadida lista de dispositivos en macOS; refactorizados argumentos de codec; eliminados nombres de dispositivos codificados
 - **v1.0.0** — Versión inicial

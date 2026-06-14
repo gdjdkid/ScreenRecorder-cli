@@ -4,14 +4,14 @@
 
 > ffmpeg を使ったクロスプラットフォーム CLI スクリーンレコーダー —— コマンド一つで画面録画を開始。
 
-[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 ---
 
-![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+![Demo](./assets/ScreenrecDemo.gif)
 
 ---
 
@@ -19,6 +19,9 @@
 
 - 🎥 **画面 + 音声録画** —— デスクトップ映像・システム音声・マイクを同時キャプチャしてミックス
 - 📁 **柔軟な出力パス** —— デフォルト出力ディレクトリを永続保存、または毎回一時指定も可能
+- 📝 **対話式ファイル名入力** —— 録画開始前にファイル名を入力（`-n` でスキップ可能）
+- 🔁 **スマートな重複処理** —— 既存ファイルを検出し、リネーム・上書き・自動採番から選択可能
+- ⏳ **録画前カウントダウン** —— 開始前のカウントダウンを設定可能、準備時間を確保
 - 🎛️ **デバイス設定** —— 音声デバイス名を一度保存すれば次回から自動適用
 - 🔍 **ffmpeg 自動検出** —— インストール時・実行時に ffmpeg の有無を確認し、不足時は案内を表示
 - 🖥️ **クロスプラットフォーム** —— Windows (gdigrab)・macOS (avfoundation)・Linux (x11grab)
@@ -90,6 +93,30 @@ screenrec start
 screenrec start
 ```
 
+`start` を実行すると、screenrec は以下の順に処理します：
+1. ファイル名の入力を求める（Enter のみでデフォルトのタイムスタンプ名を使用）
+2. 同名ファイルが既に存在するか確認 —— 存在する場合はリネーム・上書き・自動採番を選択
+3. 録画開始前に 3 秒のカウントダウンを表示
+
+**ファイル名入力をスキップ：**
+```bash
+screenrec start -n "demo_v1"
+```
+
+**カウントダウンのカスタマイズまたはスキップ：**
+```bash
+# 5秒カウントダウン
+screenrec start -c 5
+
+# カウントダウンなし
+screenrec start --no-countdown
+```
+
+**すべての確認をスキップ（デフォルト名・カウントダウンなし・重複時は自動採番）：**
+```bash
+screenrec start -y
+```
+
 **特定フォルダへ録画：**
 ```bash
 screenrec start -o /Users/yourname/Movies
@@ -153,6 +180,10 @@ start のオプション：
   --no-audio             音声録音を無効化
   --mic <名前>           マイクデバイス名（今回のみ有効）
   --system <名前>        システム音声デバイス名（今回のみ有効）
+  -n, --name <名前>      ファイル名（拡張子なし）、対話式入力をスキップ
+  -c, --countdown <秒>   録画開始前のカウントダウン秒数（デフォルト：3、0で無効化）
+  --no-countdown         カウントダウンを完全にスキップ
+  -y, --yes              すべての確認をスキップ（デフォルト名・カウントダウンなし・重複時自動採番）
   -v, --version          バージョンを表示
   -h, --help             ヘルプを表示
 
@@ -222,19 +253,19 @@ screenrec -v
 
 ## よくある質問
 
-**Q：インストール後に "ffmpeg not found" と表示される？**  
+**Q：インストール後に "ffmpeg not found" と表示される？**
 A：ffmpeg を別途インストールしてください。上記「必要環境」セクションを参照してください。
 
-**Q：Windows でシステム音声が録音されない？**  
+**Q：Windows でシステム音声が録音されない？**
 A：[screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) をインストールし、システム音声デバイスとして `virtual-audio-capturer` を使用してください。
 
-**Q：デバイス名はどうやって調べるの？**  
+**Q：デバイス名はどうやって調べるの？**
 A：`screenrec devices` を実行すると利用可能な音声デバイスが一覧表示されます。その後 `screenrec set-device` で保存できます。
 
-**Q：録画を止めるには？**  
+**Q：録画を止めるには？**
 A：`Ctrl+C` を押してください。出力ファイルは自動的に保存されます。
 
-**Q：出力ファイルはどこにある？**  
+**Q：出力ファイルはどこにある？**
 A：`screenrec show-config` を実行すると現在の出力ディレクトリが確認できます。
 
 ---
@@ -269,5 +300,6 @@ PR・Issue 大歓迎です！
 
 ## 更新履歴
 
+- **v1.2.0** —— 対話式ファイル名入力、スマートな重複ファイル処理、録画前カウントダウンを追加
 - **v1.1.0** —— `set-device` コマンドを追加；Ctrl+C 停止時のクラッシュを修正；macOS のデバイス一覧に対応；コーデック引数をリファクタリング；ハードコードされたデバイス名を削除
 - **v1.0.0** —— 初回リリース

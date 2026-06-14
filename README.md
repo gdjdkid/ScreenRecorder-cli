@@ -4,14 +4,14 @@ English | [中文](./README_zh.md) | [日本語](README_jp.md) | [한국어](REA
 
 > A cross-platform CLI screen recorder powered by ffmpeg — record your screen with a single command.
 
-[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 ---
 
-![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+![Demo](./assets/ScreenrecDemo.gif)
 
 ---
 
@@ -19,6 +19,9 @@ English | [中文](./README_zh.md) | [日本語](README_jp.md) | [한국어](REA
 
 - 🎥 **Screen + Audio Recording** — Captures desktop video with system audio and microphone mixed together
 - 📁 **Flexible Output Path** — Set a persistent default output directory or specify one per recording
+- 📝 **Interactive File Naming** — Prompted for a file name before recording starts (or skip with `-n`)
+- 🔁 **Smart Duplicate Handling** — Detects existing files and lets you rename, overwrite, or auto-number
+- ⏳ **Visual Countdown** — Configurable countdown before recording begins, so you're ready when it starts
 - 🎛️ **Device Config** — Save your audio device names once, use forever
 - 🔍 **ffmpeg Auto-Detection** — Checks for ffmpeg at install time and at runtime; guides you if it's missing
 - 🖥️ **Cross-Platform** — Windows (gdigrab), macOS (avfoundation), Linux (x11grab)
@@ -90,6 +93,30 @@ Press `Ctrl+C` to stop — the file saves automatically.
 screenrec start
 ```
 
+When you run `start`, screenrec will:
+1. Ask you for a file name (press Enter to use the default timestamp name)
+2. Check if a file with that name already exists — if so, prompt you to rename, overwrite, or auto-number
+3. Show a 3-second countdown before recording begins
+
+**Skip the file name prompt:**
+```bash
+screenrec start -n "demo_v1"
+```
+
+**Customize or skip the countdown:**
+```bash
+# 5-second countdown
+screenrec start -c 5
+
+# No countdown
+screenrec start --no-countdown
+```
+
+**Skip all prompts (uses default name, no countdown, auto-renames on conflict):**
+```bash
+screenrec start -y
+```
+
 **Start recording to a specific folder:**
 ```bash
 screenrec start -o D:\MyRecordings
@@ -153,6 +180,10 @@ Options for start:
   --no-audio            Disable audio recording
   --mic <name>          Microphone device name (overrides saved config, this session only)
   --system <name>       System audio device name (overrides saved config, this session only)
+  -n, --name <name>     File name without extension; skips the interactive prompt
+  -c, --countdown <s>   Countdown seconds before recording starts (default: 3, 0 to disable)
+  --no-countdown        Skip the countdown entirely
+  -y, --yes             Skip all prompts (default name, no countdown, auto-rename on conflict)
   -v, --version         Print version number
   -h, --help            Show help
 
@@ -222,19 +253,19 @@ screenrec -v
 
 ## FAQ
 
-**Q: I get "ffmpeg not found" after installing?**  
+**Q: I get "ffmpeg not found" after installing?**
 A: ffmpeg must be installed separately. See the Requirements section above.
 
-**Q: No system audio on Windows?**  
+**Q: No system audio on Windows?**
 A: Install [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) and use `virtual-audio-capturer` as the system audio device.
 
-**Q: How do I find my device names?**  
+**Q: How do I find my device names?**
 A: Run `screenrec devices` to list all available audio devices, then save them with `screenrec set-device`.
 
-**Q: How do I stop recording?**  
+**Q: How do I stop recording?**
 A: Press `Ctrl+C`. The output file is saved automatically.
 
-**Q: Where is the output file?**  
+**Q: Where is the output file?**
 A: Run `screenrec show-config` to see your current output directory.
 
 ---
@@ -275,5 +306,6 @@ If this tool saves you time, consider supporting development:
 
 ## Changelog
 
+- **v1.2.0** — Add interactive file naming, smart duplicate file handling, and visual countdown before recording
 - **v1.1.0** — Add `set-device` command; fix SIGINT handler; add macOS device listing; refactor codec args; remove hardcoded device names
 - **v1.0.0** — Initial release

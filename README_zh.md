@@ -4,14 +4,14 @@
 
 > 一个基于 ffmpeg 的跨平台命令行录屏工具 —— 一条命令即可开始录制屏幕。
 
-[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 ---
 
-![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+![Demo](./assets/ScreenrecDemo.gif)
 
 ---
 
@@ -19,6 +19,9 @@
 
 - 🎥 **屏幕 + 音频录制** —— 同时捕获桌面画面、系统声音与麦克风，自动混音
 - 📁 **灵活的输出路径** —— 可永久保存默认输出目录，也可每次临时指定
+- 📝 **交互式文件命名** —— 开始录制前提示输入文件名（也可用 `-n` 跳过）
+- 🔁 **智能重名处理** —— 检测文件是否已存在，可选择重命名、覆盖或自动编号
+- ⏳ **可视化倒计时** —— 录制开始前可配置倒计时，让你有时间做好准备
 - 🎛️ **设备配置** —— 一次保存音频设备名称，永久生效
 - 🔍 **ffmpeg 自动检测** —— 安装时和运行时均会检测 ffmpeg 是否存在，缺失时自动给出安装指引
 - 🖥️ **跨平台支持** —— Windows (gdigrab)、macOS (avfoundation)、Linux (x11grab)
@@ -90,6 +93,30 @@ screenrec start
 screenrec start
 ```
 
+执行 `start` 后，screenrec 会依次进行：
+1. 提示输入文件名（直接按 Enter 使用默认的时间戳文件名）
+2. 检测该文件名是否已存在 —— 如果存在，会提示重命名、覆盖或自动编号
+3. 显示 3 秒倒计时，倒计时结束后开始录制
+
+**跳过文件名输入：**
+```bash
+screenrec start -n "demo_v1"
+```
+
+**自定义或跳过倒计时：**
+```bash
+# 5 秒倒计时
+screenrec start -c 5
+
+# 不显示倒计时
+screenrec start --no-countdown
+```
+
+**跳过所有交互（使用默认名，不倒计时，重名自动编号）：**
+```bash
+screenrec start -y
+```
+
 **录制到指定文件夹：**
 ```bash
 screenrec start -o D:\我的录屏
@@ -153,6 +180,10 @@ start 选项：
   --no-audio             禁用音频录制
   --mic <名称>           麦克风设备名称（仅本次有效）
   --system <名称>        系统音频设备名称（仅本次有效）
+  -n, --name <名称>      文件名（不含扩展名），跳过交互式输入
+  -c, --countdown <秒>   录制开始前的倒计时秒数（默认：3，设为 0 禁用）
+  --no-countdown         完全跳过倒计时
+  -y, --yes              跳过所有交互（默认文件名、不倒计时、重名自动编号）
   -v, --version          显示版本号
   -h, --help             显示帮助
 
@@ -222,19 +253,19 @@ screenrec -v
 
 ## 常见问题
 
-**Q：安装后提示 "ffmpeg not found"？**  
+**Q：安装后提示 "ffmpeg not found"？**
 A：ffmpeg 需单独安装，请参考上方「环境要求」部分。
 
-**Q：Windows 下无法录制系统声音？**  
+**Q：Windows 下无法录制系统声音？**
 A：请安装 [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free)，并将 `virtual-audio-capturer` 作为系统音频设备。
 
-**Q：如何找到设备名称？**  
+**Q：如何找到设备名称？**
 A：运行 `screenrec devices` 查看所有可用音频设备，然后用 `screenrec set-device` 保存。
 
-**Q：如何停止录制？**  
+**Q：如何停止录制？**
 A：按 `Ctrl+C`，输出文件自动保存。
 
-**Q：输出文件在哪里？**  
+**Q：输出文件在哪里？**
 A：运行 `screenrec show-config` 可查看当前输出目录。
 
 ---
@@ -275,5 +306,6 @@ A：运行 `screenrec show-config` 可查看当前输出目录。
 
 ## 更新日志
 
+- **v1.2.0** —— 新增交互式文件命名、智能重名处理和录制前可视化倒计时
 - **v1.1.0** —— 新增 `set-device` 命令；修复 Ctrl+C 停止录制的崩溃问题；新增 macOS 设备列表支持；重构编码参数；移除硬编码设备名
 - **v1.0.0** —— 首次发布

@@ -4,14 +4,14 @@
 
 > Un enregistreur d'écran CLI multiplateforme basé sur ffmpeg — lancez l'enregistrement en une seule commande.
 
-[![npm version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
+[![npm version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://www.npmjs.com/package/screenrecorder-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 ---
 
-![ScreenRecDemo](https://raw.githubusercontent.com/gdjdkid/ScreenRecorder-cli/master/assets/ScreenrecDemo.gif)
+![Demo](./assets/ScreenrecDemo.gif)
 
 ---
 
@@ -19,6 +19,9 @@
 
 - 🎥 **Enregistrement écran + audio** — Capture la vidéo du bureau, l'audio système et le microphone simultanément
 - 📁 **Chemin de sortie flexible** — Enregistrez un répertoire de sortie par défaut ou spécifiez-en un à chaque fois
+- 📝 **Nom de fichier interactif** — Saisie du nom de fichier avant l'enregistrement (ou ignorez avec `-n`)
+- 🔁 **Gestion intelligente des doublons** — Détecte les fichiers existants et propose de renommer, écraser ou numéroter automatiquement
+- ⏳ **Compte à rebours visuel** — Compte à rebours configurable avant le début de l'enregistrement
 - 🎛️ **Configuration des périphériques** — Enregistrez vos noms de périphériques audio une fois, utilisés automatiquement ensuite
 - 🔍 **Détection automatique de ffmpeg** — Vérifie la présence de ffmpeg à l'installation et à l'exécution
 - 🖥️ **Multiplateforme** — Windows (gdigrab), macOS (avfoundation), Linux (x11grab)
@@ -90,6 +93,30 @@ Appuyez sur `Ctrl+C` pour arrêter — le fichier est sauvegardé automatiquemen
 screenrec start
 ```
 
+Lors de l'exécution de `start`, screenrec effectue les étapes suivantes :
+1. Demande un nom de fichier (appuyez sur Entrée pour utiliser le nom horodaté par défaut)
+2. Vérifie si un fichier avec ce nom existe déjà — si c'est le cas, propose de renommer, écraser ou numéroter automatiquement
+3. Affiche un compte à rebours de 3 secondes avant le début de l'enregistrement
+
+**Ignorer la saisie du nom de fichier :**
+```bash
+screenrec start -n "demo_v1"
+```
+
+**Personnaliser ou ignorer le compte à rebours :**
+```bash
+# Compte à rebours de 5 secondes
+screenrec start -c 5
+
+# Pas de compte à rebours
+screenrec start --no-countdown
+```
+
+**Ignorer toutes les invites (nom par défaut, pas de compte à rebours, numérotation auto en cas de conflit) :**
+```bash
+screenrec start -y
+```
+
 **Enregistrer dans un dossier spécifique :**
 ```bash
 screenrec start -o /home/user/Enregistrements
@@ -153,6 +180,10 @@ Options pour start :
   --no-audio            Désactiver l'enregistrement audio
   --mic <nom>           Nom du microphone (cette session uniquement)
   --system <nom>        Nom du périphérique audio système (cette session uniquement)
+  -n, --name <nom>      Nom de fichier sans extension ; ignore la saisie interactive
+  -c, --countdown <s>   Secondes de compte à rebours avant l'enregistrement (défaut : 3, 0 pour désactiver)
+  --no-countdown        Ignorer entièrement le compte à rebours
+  -y, --yes             Ignorer toutes les invites (nom par défaut, pas de compte à rebours, numérotation auto)
   -v, --version         Afficher le numéro de version
   -h, --help            Afficher l'aide
 
@@ -222,19 +253,19 @@ screenrec -v
 
 ## Questions fréquentes
 
-**Q : J'obtiens « ffmpeg not found » après l'installation ?**  
+**Q : J'obtiens « ffmpeg not found » après l'installation ?**
 R : ffmpeg doit être installé séparément. Voir la section Prérequis ci-dessus.
 
-**Q : Pas d'audio système sous Windows ?**  
+**Q : Pas d'audio système sous Windows ?**
 R : Installez [screen-capture-recorder](https://github.com/rdp/screen-capture-recorder-to-video-windows-free) et utilisez `virtual-audio-capturer` comme périphérique audio système.
 
-**Q : Comment trouver mes noms de périphériques ?**  
+**Q : Comment trouver mes noms de périphériques ?**
 R : Exécutez `screenrec devices` pour lister tous les périphériques audio disponibles, puis sauvegardez-les avec `screenrec set-device`.
 
-**Q : Comment arrêter l'enregistrement ?**  
+**Q : Comment arrêter l'enregistrement ?**
 R : Appuyez sur `Ctrl+C`. Le fichier de sortie est sauvegardé automatiquement.
 
-**Q : Où se trouve le fichier de sortie ?**  
+**Q : Où se trouve le fichier de sortie ?**
 R : Exécutez `screenrec show-config` pour voir votre répertoire de sortie actuel.
 
 ---
@@ -275,5 +306,6 @@ Si cet outil vous fait gagner du temps, envisagez de soutenir le développement 
 
 ## Journal des modifications
 
+- **v1.2.0** — Ajout de la saisie interactive du nom de fichier, de la gestion intelligente des doublons et du compte à rebours visuel avant l'enregistrement
 - **v1.1.0** — Ajout de la commande `set-device` ; correction du crash Ctrl+C ; ajout de la liste des périphériques macOS ; refactorisation des arguments de codec ; suppression des noms de périphériques codés en dur
 - **v1.0.0** — Version initiale
